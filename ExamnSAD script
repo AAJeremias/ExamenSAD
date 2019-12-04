@@ -1,0 +1,40 @@
+## Script para comprobar si un puerto está abierto o cerrado y para comprobar si la página responde##
+param($ip,$port)
+
+$ip = Read-Host Introduzca la IP/Página web
+$port = Read-Host Introduzca el puerto 
+
+$ip > C:\Users\Antonio\examen\paginaweb.txt
+
+echo "Direccion IP:	$ip"
+echo "Puerto TCP:	$port"
+ 
+$connection = new-object net.Sockets.TcpClient
+### si el puerto está abierto...
+try 
+{
+	$connection.connect($ip,$port)
+	$connection.close()
+ 
+	Write-host -BackgroundColor DarkGreen "Puerto $port abierto"
+}
+### si el puerto está cerrado...
+catch
+{
+	Write-host -BackgroundColor Red "Puerto $port cerrado"
+}
+
+
+# Leemos el archivo
+ $listado = get-content C:\Users\Antonio\examen\paginaweb.txt
+
+#Para cada ip/página del archivo
+ ForEach ($ping in $listado) {
+    if (test-connection -ComputerName $ping -Count 1 -Quiet) {
+    # Si el test-connection es correcto
+    write-host -BackgroundColor DarkGreen -ForegroundColor Black ('{0} - RESPONDE' -f $ping)
+ } else {
+    # Si el test-connection no es correcto
+    Write-Host -BackgroundColor DarkRed -ForegroundColor White ('{0} - NO RESPONDE O LA PÁGINA NO EXISTE' -f $ping)
+    }
+}
